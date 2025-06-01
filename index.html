@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>GameBoy Vaporwave Audio Visualizer</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- Mobile web app capability -->
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <!-- SEO and accessibility improvements -->
+    <meta name="description" content="A GameBoy-styled audio visualizer with vaporwave aesthetics and Pokémon sprites">
+    <meta name="theme-color" content="#ff6ad5">
+</head>
+<body>
+    <main class="container">
+        <div class="gameboy" aria-label="GameBoy Audio Visualizer">
+            <div class="gameboy-body">
+                <div class="screen-container">
+                    <div class="screen-border">
+                        <div class="power-indicator" aria-hidden="true"></div>
+                        <div class="brand" aria-label="Game Boy">GAME BOY</div>
+                    </div>
+                    <div class="screen">
+                        <canvas id="visualizer-canvas" aria-label="Audio Visualization"></canvas>
+                        <div class="menu-overlay" id="menu-overlay" aria-hidden="true">
+                            <h2 class="menu-title">MENU</h2>
+                            <ul class="menu-items">
+                                <li class="selected">Visualization Style</li>
+                                <li>Color Palette</li>
+                                <li>Sprite Selection</li>
+                                <li>Audio Source</li>
+                                <li>Settings</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="controls">
+                    <div class="dpad" aria-label="Direction pad">
+                        <button class="dpad-up" id="btn-up" aria-label="Up"></button>
+                        <button class="dpad-right" id="btn-right" aria-label="Right"></button>
+                        <button class="dpad-down" id="btn-down" aria-label="Down"></button>
+                        <button class="dpad-left" id="btn-left" aria-label="Left"></button>
+                        <div class="dpad-center" aria-hidden="true"></div>
+                    </div>
+                    <div class="action-buttons">
+                        <button class="btn-a" id="btn-a" aria-label="A button">A</button>
+                        <button class="btn-b" id="btn-b" aria-label="B button">B</button>
+                    </div>
+                </div>
+                <div class="menu-buttons">
+                    <button class="btn-select" id="btn-select" aria-label="Select button">SELECT</button>
+                    <button class="btn-start" id="btn-start" aria-label="Start button">START</button>
+                </div>
+                <div class="speaker" aria-hidden="true">
+                    <div class="speaker-hole"></div>
+                    <div class="speaker-hole"></div>
+                    <div class="speaker-hole"></div>
+                    <div class="speaker-hole"></div>
+                    <div class="speaker-hole"></div>
+                    <div class="speaker-hole"></div>
+                </div>
+            </div>
+        </div>
+    </main>
+    <div class="mobile-instructions" id="mobile-instructions" role="dialog" aria-labelledby="instructions-title">
+        <h1 id="instructions-title">GameBoy Audio Visualizer</h1>
+        <p>Tap to start the audio visualizer</p>
+        <p>Allow microphone access when prompted</p>
+        <button id="start-button">START VISUALIZER</button>
+    </div>
+    <script src="audio.js"></script>
+    <script src="visualizer.js"></script>
+    <script src="interface.js"></script>
+    <script>
+        // Mobile-specific initialization
+        document.addEventListener('DOMContentLoaded', function() {
+            const mobileInstructions = document.getElementById('mobile-instructions');
+            const startButton = document.getElementById('start-button');
+            
+            // Check if we're on mobile
+            const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+            
+            if (isMobile) {
+                mobileInstructions.style.display = 'flex';
+                
+                startButton.addEventListener('click', function() {
+                    mobileInstructions.style.display = 'none';
+                    // This will trigger audio context initialization which requires user gesture on mobile
+                    if (audioProcessor && !audioProcessor.isInitialized) {
+                        audioProcessor.init();
+                    }
+                });
+                
+                // Add touch event listeners for controls
+                document.querySelectorAll('.dpad-up, .dpad-right, .dpad-down, .dpad-left, .btn-a, .btn-b, .btn-select, .btn-start').forEach(element => {
+                    element.addEventListener('touchstart', function(e) {
+                        e.preventDefault(); // Prevent default touch behavior
+                        this.click(); // Trigger the click event
+                    });
+                });
+            }
+            
+            // Handle orientation changes
+            window.addEventListener('orientationchange', function() {
+                // Force redraw after orientation change
+                setTimeout(function() {
+                    if (visualizer) {
+                        visualizer.resizeCanvas();
+                    }
+                }, 300);
+            });
+            
+            // Handle resize events for responsive adjustments
+            window.addEventListener('resize', function() {
+                if (visualizer) {
+                    visualizer.resizeCanvas();
+                }
+            });
+            
+            // Force initial layout calculation
+            window.dispatchEvent(new Event('resize'));
+        });
+    </script>
+</body>
+</html>

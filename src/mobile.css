@@ -1,0 +1,92 @@
+/* Mobile-specific adjustments */
+@media (max-width: 768px) {
+  .gameboy {
+    max-width: 100%;
+    height: 100vh;
+  }
+  
+  .gameboy-body {
+    border-radius: 10px;
+  }
+  
+  .controls {
+    margin-top: 10px;
+  }
+  
+  .dpad {
+    width: 100px;
+    height: 100px;
+  }
+  
+  .dpad-up, .dpad-right, .dpad-down, .dpad-left {
+    width: 35px;
+    height: 35px;
+  }
+  
+  .dpad-center {
+    width: 30px;
+    height: 30px;
+  }
+  
+  .btn-a, .btn-b {
+    width: 40px;
+    height: 40px;
+    font-size: 1.2em;
+  }
+  
+  .menu-buttons {
+    bottom: 5%;
+  }
+  
+  .btn-select, .btn-start {
+    padding: 8px 15px;
+    font-size: 0.9em;
+  }
+  
+  /* Touch-friendly adjustments */
+  .dpad-up, .dpad-right, .dpad-down, .dpad-left, 
+  .btn-a, .btn-b, .btn-select, .btn-start {
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+    user-select: none;
+    touch-action: manipulation;
+  }
+  
+  /* Add active state for touch feedback */
+  .dpad-up:active, .dpad-right:active, .dpad-down:active, .dpad-left:active,
+  .btn-a:active, .btn-b:active, .btn-select:active, .btn-start:active {
+    opacity: 0.7;
+    transform: scale(0.95);
+  }
+}
+
+/* Portrait orientation specific */
+@media (max-width: 768px) and (orientation: portrait) {
+  .gameboy {
+    max-width: 95vw;
+    height: auto;
+    aspect-ratio: 9/16;
+  }
+  
+  .screen-container {
+    width: 90%;
+    margin-top: 10%;
+  }
+}
+
+/* Landscape orientation specific */
+@media (max-width: 768px) and (orientation: landscape) {
+  .gameboy {
+    max-width: 95vh;
+    height: 95vh;
+  }
+  
+  .screen-container {
+    width: 60%;
+    margin-top: 2%;
+  }
+  
+  .controls {
+    margin-top: 5px;
+  }
+}
