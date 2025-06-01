@@ -2,126 +2,766 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>GameBoy Vaporwave Audio Visualizer</title>
-    <link rel="stylesheet" href="style.css">
-    <!-- Mobile web app capability -->
-    <meta name="mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <!-- SEO and accessibility improvements -->
-    <meta name="description" content="A GameBoy-styled audio visualizer with vaporwave aesthetics and Pokémon sprites">
-    <meta name="theme-color" content="#ff6ad5">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gameboy Audio Visualizer</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Press Start 2P', cursive;
+            overscroll-behavior: none; /* Prevents pull-to-refresh on mobile */
+        }
+        /* Custom Gameboy styles */
+        .gameboy-bg { background-color: #c0c0c0; } /* Classic grey, can be themed */
+        .gameboy-screen-border { background-color: #708090; } /* Slate grey */
+        .gameboy-screen { background-color: #9bbc0f; /* Classic Gameboy green */ }
+        .gameboy-button {
+            background-color: #525252; /* Darker grey for buttons */
+            color: white;
+            border: 2px solid #303030;
+            box-shadow: 2px 2px 0px #303030;
+            user-select: none; /* Prevent text selection on tap */
+        }
+        .gameboy-button:active {
+            background-color: #404040;
+            box-shadow: 1px 1px 0px #303030;
+            transform: translate(1px, 1px);
+        }
+        .d-pad-button {
+            background-color: #404040; /* Even darker for D-pad */
+            border: 2px solid #202020;
+            box-shadow: 2px 2px 0px #202020;
+        }
+        .d-pad-button:active {
+            background-color: #303030;
+            box-shadow: 1px 1px 0px #202020;
+            transform: translate(1px, 1px);
+        }
+        .menu-item.selected {
+            background-color: rgba(255, 255, 255, 0.3);
+            color: #0f380f; /* Dark green for selected text on light background */
+        }
+        .pixelated {
+            image-rendering: pixelated;
+            image-rendering: -moz-crisp-edges;
+            image-rendering: crisp-edges;
+        }
+        /* Ensure no scrollbars appear on the body */
+        html, body {
+            overflow: hidden;
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+        .start-select-text {
+            font-size: 0.6rem; /* Smaller text for start/select labels */
+            color: #303030;
+            text-shadow: 1px 1px #a0a0a0;
+        }
+
+        /* Modal styles */
+        .modal {
+            background-color: rgba(0, 0, 0, 0.7);
+            color: white;
+            border: 4px solid #0f380f; /* Gameboy dark green border */
+        }
+        .modal-button {
+            background-color: #0f380f; /* Gameboy dark green */
+            color: #9bbc0f; /* Gameboy light green text */
+            border: 2px solid #306230;
+        }
+        .modal-button:hover {
+            background-color: #306230;
+        }
+
+        /* Vaporwave color scheme */
+        .theme-vaporwave .gameboy-bg { background-color: #ff71ce; }
+        .theme-vaporwave .gameboy-screen-border { background-color: #01cdfe; }
+        .theme-vaporwave .gameboy-screen { background-color: #05ffa1; }
+        .theme-vaporwave .gameboy-button { background-color: #ff71ce; border-color: #b90085; box-shadow: 2px 2px 0px #b90085; }
+        .theme-vaporwave .d-pad-button { background-color: #01cdfe; border-color: #008ea8; box-shadow: 2px 2px 0px #008ea8; }
+        .theme-vaporwave .menu-item.selected { color: #ff71ce; }
+        .theme-vaporwave .start-select-text { color: #b90085; text-shadow: 1px 1px #ffb8e7; }
+
+
+        /* Neo-Vaporwave color scheme */
+        .theme-neo-vaporwave .gameboy-bg { background-color: #46244C; }
+        .theme-neo-vaporwave .gameboy-screen-border { background-color: #712B75; }
+        .theme-neo-vaporwave .gameboy-screen { background-color: #C74B50; }
+        .theme-neo-vaporwave .gameboy-button { background-color: #D49B54; border-color: #8c6430; box-shadow: 2px 2px 0px #8c6430; }
+        .theme-neo-vaporwave .d-pad-button { background-color: #712B75; border-color: #491c4c; box-shadow: 2px 2px 0px #491c4c; }
+        .theme-neo-vaporwave .menu-item.selected { color: #D49B54; }
+        .theme-neo-vaporwave .start-select-text { color: #712B75; text-shadow: 1px 1px #b17d91; }
+
+
+        /* Synthwave color scheme */
+        .theme-synthwave .gameboy-bg { background-color: #2c003e; }
+        .theme-synthwave .gameboy-screen-border { background-color: #ff00ff; }
+        .theme-synthwave .gameboy-screen { background-color: #00ffff; }
+        .theme-synthwave .gameboy-button { background-color: #ff00ff; border-color: #a100a1; box-shadow: 2px 2px 0px #a100a1; }
+        .theme-synthwave .d-pad-button { background-color: #ff6600; border-color: #a14000; box-shadow: 2px 2px 0px #a14000; }
+        .theme-synthwave .menu-item.selected { color: #ff00ff; }
+        .theme-synthwave .start-select-text { color: #ff00ff; text-shadow: 1px 1px #ffb3ff; }
+
+
+        /* Gameboy Green (Default) color scheme */
+        .theme-gameboy-green .gameboy-bg { background-color: #c0c0c0; }
+        .theme-gameboy-green .gameboy-screen-border { background-color: #708090; }
+        .theme-gameboy-green .gameboy-screen { background-color: #9bbc0f; }
+        .theme-gameboy-green .gameboy-button { background-color: #525252; border-color: #303030; box-shadow: 2px 2px 0px #303030; }
+        .theme-gameboy-green .d-pad-button { background-color: #404040; border-color: #202020; box-shadow: 2px 2px 0px #202020; }
+        .theme-gameboy-green .menu-item.selected { color: #0f380f; }
+        .theme-gameboy-green .start-select-text { color: #303030; text-shadow: 1px 1px #a0a0a0; }
+
+        /* Glitch effect - can be more sophisticated */
+        .glitch {
+            animation: glitch-anim 0.5s infinite alternate;
+        }
+        @keyframes glitch-anim {
+            0% { transform: translate(0, 0); opacity: 1; }
+            20% { transform: translate(-2px, 2px); opacity: 0.8; }
+            40% { transform: translate(2px, -2px); opacity: 1; }
+            60% { transform: translate(-1px, 1px); filter: hue-rotate(90deg); opacity: 0.9; }
+            80% { transform: translate(1px, -1px); filter: hue-rotate(0deg); opacity: 1; }
+            100% { transform: translate(0, 0); opacity: 1; }
+        }
+    </style>
 </head>
-<body>
-    <main class="container">
-        <div class="gameboy" aria-label="GameBoy Audio Visualizer">
-            <div class="gameboy-body">
-                <div class="screen-container">
-                    <div class="screen-border">
-                        <div class="power-indicator" aria-hidden="true"></div>
-                        <div class="brand" aria-label="Game Boy">GAME BOY</div>
-                    </div>
-                    <div class="screen">
-                        <canvas id="visualizer-canvas" aria-label="Audio Visualization"></canvas>
-                        <div class="menu-overlay" id="menu-overlay" aria-hidden="true">
-                            <h2 class="menu-title">MENU</h2>
-                            <ul class="menu-items">
-                                <li class="selected">Visualization Style</li>
-                                <li>Color Palette</li>
-                                <li>Sprite Selection</li>
-                                <li>Audio Source</li>
-                                <li>Settings</li>
-                            </ul>
-                        </div>
-                    </div>
+<body class="bg-black flex items-center justify-center h-screen overflow-hidden theme-gameboy-green">
+
+    <div id="gameboy-container" class="gameboy-bg relative w-full h-full sm:w-[360px] sm:h-[600px] md:w-[400px] md:h-[660px] lg:w-[450px] lg:h-[750px] p-4 sm:p-6 rounded-lg shadow-2xl flex flex-col select-none">
+        <div class="gameboy-screen-border w-full flex-grow mb-4 sm:mb-6 rounded-md p-2 sm:p-3 flex items-center justify-center">
+            <div id="screen-wrapper" class="relative w-full h-full">
+                <canvas id="visualizerCanvas" class="gameboy-screen w-full h-full pixelated rounded-sm"></canvas>
+                <div id="menuOverlay" class="absolute inset-0 bg-black bg-opacity-75 text-white p-4 flex flex-col justify-center items-center hidden">
+                    <h2 class="text-xl mb-4">MENU</h2>
+                    <ul id="menuItems" class="text-lg w-full text-center">
+                        </ul>
+                    <p class="mt-4 text-xs">Use D-Pad/Arrows, A/Z to select, B/X to close</p>
                 </div>
-                <div class="controls">
-                    <div class="dpad" aria-label="Direction pad">
-                        <button class="dpad-up" id="btn-up" aria-label="Up"></button>
-                        <button class="dpad-right" id="btn-right" aria-label="Right"></button>
-                        <button class="dpad-down" id="btn-down" aria-label="Down"></button>
-                        <button class="dpad-left" id="btn-left" aria-label="Left"></button>
-                        <div class="dpad-center" aria-hidden="true"></div>
-                    </div>
-                    <div class="action-buttons">
-                        <button class="btn-a" id="btn-a" aria-label="A button">A</button>
-                        <button class="btn-b" id="btn-b" aria-label="B button">B</button>
-                    </div>
-                </div>
-                <div class="menu-buttons">
-                    <button class="btn-select" id="btn-select" aria-label="Select button">SELECT</button>
-                    <button class="btn-start" id="btn-start" aria-label="Start button">START</button>
-                </div>
-                <div class="speaker" aria-hidden="true">
-                    <div class="speaker-hole"></div>
-                    <div class="speaker-hole"></div>
-                    <div class="speaker-hole"></div>
-                    <div class="speaker-hole"></div>
-                    <div class="speaker-hole"></div>
-                    <div class="speaker-hole"></div>
+                 <div id="messageBox" class="absolute inset-x-0 bottom-4 bg-black bg-opacity-80 text-white p-2 text-center text-sm hidden rounded">
+                    <p id="messageText"></p>
                 </div>
             </div>
         </div>
-    </main>
-    <div class="mobile-instructions" id="mobile-instructions" role="dialog" aria-labelledby="instructions-title">
-        <h1 id="instructions-title">GameBoy Audio Visualizer</h1>
-        <p>Tap to start the audio visualizer</p>
-        <p>Allow microphone access when prompted</p>
-        <button id="start-button">START VISUALIZER</button>
+
+        <div class="flex-shrink-0">
+            <div class="text-center mb-2 sm:mb-4">
+                <span class="text-red-600 font-bold italic text-lg" style="font-family: Arial, sans-serif;">N i n t e n d o</span>
+                <span class="text-red-600 font-bold text-2xl align-middle" style="font-family: Arial, sans-serif;"> GAME BOY</span>
+                <span class="text-red-600 text-xs align-super" style="font-family: Arial, sans-serif;">™</span>
+            </div>
+
+            <div class="grid grid-cols-3 gap-2 sm:gap-4 items-center justify-center">
+                <div class="flex justify-center items-center">
+                    <div class="grid grid-cols-3 grid-rows-3 w-20 h-20 sm:w-24 sm:h-24">
+                        <div></div> <button id="btn-up" class="d-pad-button col-start-2 rounded-t-md">▲</button> <div></div>
+                        <button id="btn-left" class="d-pad-button row-start-2 rounded-l-md">◀</button>
+                        <div class="bg-gray-700 row-start-2 col-start-2"></div>
+                        <button id="btn-right" class="d-pad-button row-start-2 col-start-3 rounded-r-md">▶</button>
+                        <div></div> <button id="btn-down" class="d-pad-button row-start-3 col-start-2 rounded-b-md">▼</button> <div></div>
+                    </div>
+                </div>
+
+                <div class="flex flex-col items-end justify-end h-full pr-2 sm:pr-4">
+                    <div class="w-10 sm:w-12 space-y-1 opacity-50">
+                        <div class="h-1 bg-gray-700 rounded-full"></div>
+                        <div class="h-1 bg-gray-700 rounded-full"></div>
+                        <div class="h-1 bg-gray-700 rounded-full"></div>
+                        <div class="h-1 bg-gray-700 rounded-full"></div>
+                        <div class="h-1 bg-gray-700 rounded-full"></div>
+                    </div>
+                </div>
+
+
+                <div class="flex justify-center items-center space-x-3 sm:space-x-4">
+                    <button id="btn-b" class="gameboy-button w-10 h-10 sm:w-12 sm:h-12 rounded-full text-lg font-bold">B</button>
+                    <button id="btn-a" class="gameboy-button w-10 h-10 sm:w-12 sm:h-12 rounded-full text-lg font-bold">A</button>
+                </div>
+            </div>
+
+            <div class="flex justify-center space-x-6 sm:space-x-8 mt-3 sm:mt-5">
+                <div class="text-center">
+                    <button id="btn-select" class="gameboy-button w-12 h-5 sm:w-16 sm:h-6 rounded-full"></button>
+                    <p class="start-select-text mt-1">SELECT</p>
+                </div>
+                <div class="text-center">
+                    <button id="btn-start" class="gameboy-button w-12 h-5 sm:w-16 sm:h-6 rounded-full"></button>
+                    <p class="start-select-text mt-1">START</p>
+                </div>
+            </div>
+        </div>
     </div>
-    <script src="audio.js"></script>
-    <script src="visualizer.js"></script>
-    <script src="interface.js"></script>
+
+    <div id="permissionModal" class="fixed inset-0 bg-black bg-opacity-90 flex flex-col items-center justify-center z-50 p-4">
+        <div class="modal p-6 sm:p-8 rounded-lg text-center max-w-md">
+            <h1 class="text-2xl sm:text-3xl mb-4">Gameboy Visualizer</h1>
+            <p class="mb-6 sm:mb-8 text-sm sm:text-base">Welcome! This app uses your microphone for audio visualization. Please grant permission when prompted.</p>
+            <button id="startAppButton" class="modal-button px-6 py-3 text-lg sm:text-xl rounded-md hover:bg-opacity-80 transition-colors">
+                Start Visualizer
+            </button>
+            <p class="text-xs mt-6 opacity-70">Press Enter or click Start to begin.</p>
+        </div>
+    </div>
+
+
     <script>
-        // Mobile-specific initialization
-        document.addEventListener('DOMContentLoaded', function() {
-            const mobileInstructions = document.getElementById('mobile-instructions');
-            const startButton = document.getElementById('start-button');
-            
-            // Check if we're on mobile
-            const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-            
-            if (isMobile) {
-                mobileInstructions.style.display = 'flex';
-                
-                startButton.addEventListener('click', function() {
-                    mobileInstructions.style.display = 'none';
-                    // This will trigger audio context initialization which requires user gesture on mobile
-                    if (audioProcessor && !audioProcessor.isInitialized) {
-                        audioProcessor.init();
+        // --- DOM Elements ---
+        const canvas = document.getElementById('visualizerCanvas');
+        const ctx = canvas.getContext('2d');
+        const menuOverlay = document.getElementById('menuOverlay');
+        const menuItemsElement = document.getElementById('menuItems');
+        const permissionModal = document.getElementById('permissionModal');
+        const startAppButton = document.getElementById('startAppButton');
+        const gameboyContainer = document.getElementById('gameboy-container');
+        const messageBox = document.getElementById('messageBox');
+        const messageText = document.getElementById('messageText');
+
+        // --- Audio Context and Analyzer ---
+        let audioContext;
+        let analyser;
+        let source;
+        let dataArray; // For frequency data
+        let waveformArray; // For waveform data
+        let bufferLength;
+
+        // --- Visualizer State ---
+        let currentColorScheme = 'gameboy-green';
+        let currentVisualizer = 'bars'; // 'bars', 'waveform', 'sprites'
+        let currentAudioSource = 'mic'; // 'mic', 'system' (system is placeholder)
+        let glitchEffectActive = false;
+        let sprites = {
+            pikachu: null, // Will be SVG or canvas drawing
+            bulbasaur: null
+        };
+        let isFullScreen = false;
+        let animationFrameId;
+        let audioInitialized = false;
+
+        // --- Menu State ---
+        let menuOpen = false;
+        let currentMenuIndex = 0;
+        const menuStructure = [
+            { 
+                name: "Visualizer", 
+                options: ['Bars', 'Waveform', 'Sprites'], 
+                action: (option) => { currentVisualizer = option.toLowerCase(); showMessage(`Visualizer: ${option}`); }
+            },
+            { 
+                name: "Color Scheme", 
+                options: ['Gameboy Green', 'Vaporwave', 'Neo-Vaporwave', 'Synthwave'], 
+                action: (option) => { 
+                    const schemeClass = 'theme-' + option.toLowerCase().replace(' ', '-');
+                    document.body.className = document.body.className.replace(/theme-\S+/g, ''); // Remove old theme
+                    document.body.classList.add(schemeClass);
+                    currentColorScheme = schemeClass;
+                    showMessage(`Color Scheme: ${option}`);
+                } 
+            },
+            {
+                name: "Pokemon Sprite",
+                options: ['Pikachu', 'Bulbasaur', 'None'],
+                action: (option) => {
+                    // This will be used by the 'sprites' visualizer
+                    activeSprite = option.toLowerCase();
+                    showMessage(`Sprite: ${option}`);
+                }
+            },
+            { 
+                name: "Glitch Effect", 
+                options: ['Off', 'On'], 
+                action: (option) => { 
+                    glitchEffectActive = option === 'On';
+                    if (glitchEffectActive) canvas.classList.add('glitch');
+                    else canvas.classList.remove('glitch');
+                    showMessage(`Glitch: ${glitchEffectActive ? 'On' : 'Off'}`);
+                } 
+            },
+            { 
+                name: "Audio Source", 
+                options: ['Microphone', 'System (N/A)'], 
+                action: (option) => { 
+                    if (option === 'Microphone') {
+                        currentAudioSource = 'mic';
+                        if (!audioInitialized) initAudio(); // Re-init if needed, though ideally it's already running
+                        showMessage("Audio: Mic");
+                    } else {
+                        showMessage("System audio not available in browser.");
                     }
+                } 
+            },
+            {
+                name: "Fullscreen",
+                options: ['Toggle'],
+                action: () => toggleFullScreen()
+            },
+            { name: "Close Menu", options: [], action: () => toggleMenu(false) }
+        ];
+        let activeSubMenu = null; // To handle sub-menu options
+        let currentSubMenuIndex = 0;
+        let activeSprite = 'pikachu'; // Default sprite
+
+        // --- Sprite Definitions (SVG) ---
+        // Simple pixelated Pikachu SVG
+        const pikachuSVG = `
+            <svg width="32" height="32" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" class="pixelated">
+                <rect x="10" y="4" width="12" height="2" fill="#FFDE00"/>
+                <rect x="8" y="6" width="16" height="2" fill="#FFDE00"/>
+                <rect x="6" y="8" width="20" height="2" fill="#FFDE00"/>
+                <rect x="6" y="10" width="2" height="2" fill="#000000"/><rect x="8" y="10" width="16" height="2" fill="#FFDE00"/><rect x="24" y="10" width="2" height="2" fill="#000000"/>
+                <rect x="4" y="12" width="2" height="4" fill="#000000"/><rect x="6" y="12" width="20" height="2" fill="#FFDE00"/><rect x="26" y="12" width="2" height="4" fill="#000000"/>
+                <rect x="6" y="14" width="2" height="2" fill="#FFDE00"/><rect x="8" y="14" width="2" height="2" fill="#000000"/><rect x="10" y="14" width="12" height="2" fill="#FFDE00"/><rect x="22" y="14" width="2" height="2" fill="#000000"/><rect x="24" y="14" width="2" height="2" fill="#FFDE00"/>
+                <rect x="6" y="16" width="20" height="2" fill="#FFDE00"/>
+                <rect x="8" y="18" width="4" height="2" fill="#FFDE00"/><rect x="12" y="18" width="2" height="2" fill="#CC0000"/><rect x="14" y="18" width="2" height="2" fill="#FFDE00"/><rect x="16" y="18" width="2" height="2" fill="#CC0000"/><rect x="18" y="18" width="4" height="2" fill="#FFDE00"/>
+                <rect x="10" y="20" width="12" height="2" fill="#FFDE00"/>
+                <rect x="12" y="22" width="8" height="2" fill="#FFDE00"/>
+                <rect x="10" y="24" width="2" height="2" fill="#B3A125"/><rect x="12" y="24" width="8" height="2" fill="#FFDE00"/><rect x="20" y="24" width="2" height="2" fill="#B3A125"/>
+                <rect x="8" y="26" width="2" height="2" fill="#B3A125"/><rect x="10" y="26" width="12" height="2" fill="#FFDE00"/><rect x="22" y="26" width="2" height="2" fill="#B3A125"/>
+            </svg>`;
+
+        // Simple pixelated Bulbasaur SVG
+        const bulbasaurSVG = `
+            <svg width="32" height="32" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" class="pixelated">
+                <rect x="14" y="2" width="4" height="2" fill="#3A9A47"/> <rect x="12" y="4" width="8" height="2" fill="#3A9A47"/>
+                <rect x="10" y="6" width="12" height="2" fill="#3A9A47"/> <rect x="8" y="8" width="16" height="2" fill="#3A9A47"/>
+                <rect x="6" y="10" width="4" height="2" fill="#7BCE84"/> <rect x="10" y="10" width="12" height="2" fill="#3A9A47"/> <rect x="22" y="10" width="4" height="2" fill="#7BCE84"/>
+                <rect x="6" y="12" width="2" height="2" fill="#000000"/> <rect x="8" y="12" width="16" height="2" fill="#7BCE84"/> <rect x="24" y="12" width="2" height="2" fill="#000000"/>
+                <rect x="8" y="14" width="16" height="2" fill="#7BCE84"/>
+                <rect x="6" y="16" width="20" height="2" fill="#7BCE84"/>
+                <rect x="4" y="18" width="24" height="2" fill="#7BCE84"/>
+                <rect x="6" y="20" width="2" height="2" fill="#FF0000"/> <rect x="8" y="20" width="16" height="2" fill="#7BCE84"/> <rect x="24" y="20" width="2" height="2" fill="#FF0000"/>
+                <rect x="4" y="22" width="2" height="2" fill="#528459"/> <rect x="6" y="22" width="20" height="2" fill="#7BCE84"/> <rect x="26" y="22" width="2" height="2" fill="#528459"/>
+                <rect x="6" y="24" width="4" height="2" fill="#528459"/> <rect x="10" y="24" width="12" height="2" fill="#7BCE84"/> <rect x="22" y="24" width="4" height="2" fill="#528459"/>
+                <rect x="8" y="26" width="2" height="2" fill="#528459"/> <rect x="22" y="26" width="2" height="2" fill="#528459"/>
+            </svg>`;
+
+        function loadSprites() {
+            // Convert SVG strings to Image objects for drawing on canvas
+            const pikaImg = new Image();
+            pikaImg.onload = () => { sprites.pikachu = pikaImg; };
+            pikaImg.src = 'data:image/svg+xml;base64,' + btoa(pikachuSVG);
+
+            const bulbaImg = new Image();
+            bulbaImg.onload = () => { sprites.bulbasaur = bulbaImg; };
+            bulbaImg.src = 'data:image/svg+xml;base64,' + btoa(bulbasaurSVG);
+        }
+        loadSprites();
+
+
+        // --- Utility Functions ---
+        function showMessage(text, duration = 2000) {
+            messageText.textContent = text;
+            messageBox.classList.remove('hidden');
+            setTimeout(() => {
+                messageBox.classList.add('hidden');
+            }, duration);
+        }
+
+        function toggleFullScreen() {
+            if (!document.fullscreenElement) {
+                gameboyContainer.requestFullscreen().catch(err => {
+                    showMessage(`Error entering fullscreen: ${err.message}`);
                 });
-                
-                // Add touch event listeners for controls
-                document.querySelectorAll('.dpad-up, .dpad-right, .dpad-down, .dpad-left, .btn-a, .btn-b, .btn-select, .btn-start').forEach(element => {
-                    element.addEventListener('touchstart', function(e) {
-                        e.preventDefault(); // Prevent default touch behavior
-                        this.click(); // Trigger the click event
-                    });
-                });
+                isFullScreen = true;
+            } else {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                }
+                isFullScreen = false;
+            }
+            // Re-render menu in case it was open
+            if (menuOpen) renderMenu();
+        }
+
+        // --- Audio Initialization ---
+        async function initAudio() {
+            if (audioInitialized && audioContext && audioContext.state === 'running') {
+                 console.log("Audio already initialized and running.");
+                 if (source && source.mediaStream && source.mediaStream.active) {
+                    // It seems okay, no need to re-init
+                 } else {
+                    // Stream might be inactive, try to get it again
+                    audioInitialized = false; 
+                 }
             }
             
-            // Handle orientation changes
-            window.addEventListener('orientationchange', function() {
-                // Force redraw after orientation change
-                setTimeout(function() {
-                    if (visualizer) {
-                        visualizer.resizeCanvas();
-                    }
-                }, 300);
-            });
+            if (audioInitialized) return;
+
+            try {
+                audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                const stream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
+                source = audioContext.createMediaStreamSource(stream);
+                analyser = audioContext.createAnalyser();
+                
+                analyser.fftSize = 256; // Smaller for pixelated look, adjust as needed
+                bufferLength = analyser.frequencyBinCount;
+                dataArray = new Uint8Array(bufferLength);
+                waveformArray = new Uint8Array(bufferLength);
+
+                source.connect(analyser);
+                // Do not connect analyser to destination to avoid echo, unless specific effects need it
+                // analyser.connect(audioContext.destination); 
+
+                audioInitialized = true;
+                showMessage("Microphone connected!", 1500);
+                if (animationFrameId) cancelAnimationFrame(animationFrameId); // Cancel previous loop if any
+                draw(); // Start drawing loop
+            } catch (err) {
+                console.error("Error initializing audio:", err);
+                showMessage(`Mic Error: ${err.message}. Try refreshing.`, 5000);
+                permissionModal.classList.remove('hidden'); // Show modal again if permission failed
+                audioInitialized = false;
+            }
+        }
+
+
+        // --- Canvas Resizing and Drawing ---
+        function resizeCanvas() {
+            // The canvas itself is styled with w-full h-full, so its display size is responsive.
+            // We need to set its internal drawing resolution.
+            // For a pixelated effect, we can use a lower internal resolution.
+            const screenWrapper = document.getElementById('screen-wrapper');
+            const aspectRatio = 10 / 9; // Classic Gameboy screen aspect ratio (160x144)
             
-            // Handle resize events for responsive adjustments
-            window.addEventListener('resize', function() {
-                if (visualizer) {
-                    visualizer.resizeCanvas();
+            let newWidth = screenWrapper.clientWidth;
+            let newHeight = screenWrapper.clientHeight;
+
+            // Maintain aspect ratio within the container
+            if (newWidth / newHeight > aspectRatio) {
+                newWidth = newHeight * aspectRatio;
+            } else {
+                newHeight = newWidth / aspectRatio;
+            }
+            
+            // For pixelation, render to a smaller internal canvas and let CSS scale it up
+            // Gameboy resolution was 160x144
+            canvas.width = 160; 
+            canvas.height = 144;
+
+            // The CSS will scale this 160x144 canvas to fit the .gameboy-screen div
+            // The .pixelated class handles the scaling algorithm.
+        }
+
+        function draw() {
+            animationFrameId = requestAnimationFrame(draw);
+            if (!audioInitialized || !analyser) {
+                // Draw a placeholder or idle screen if audio isn't ready
+                ctx.fillStyle = getComputedStyle(canvas).backgroundColor || '#9bbc0f';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                ctx.fillStyle = '#0f380f'; // Dark green text
+                ctx.textAlign = 'center';
+                ctx.fillText("Waiting for audio...", canvas.width / 2, canvas.height / 2);
+                return;
+            }
+
+            analyser.getByteFrequencyData(dataArray);
+            analyser.getByteTimeDomainData(waveformArray);
+
+            // Clear canvas with current theme's screen color
+            ctx.fillStyle = getComputedStyle(canvas).backgroundColor || '#9bbc0f';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            // Set drawing color based on theme (e.g., dark green for default GB)
+            // This needs to be dynamic based on the theme. For now, a generic dark color.
+            const visualizerColor = getColorForTheme('visualizerElement');
+
+
+            if (!menuOpen) { // Only draw visualizer if menu is closed
+                switch (currentVisualizer) {
+                    case 'bars':
+                        drawBars(visualizerColor);
+                        break;
+                    case 'waveform':
+                        drawWaveform(visualizerColor);
+                        break;
+                    case 'sprites':
+                        drawSprites(visualizerColor);
+                        break;
+                }
+            }
+        }
+        
+        function getColorForTheme(elementType) {
+            // This is a simplified example. A more robust solution would parse CSS variables or have a theme object.
+            // For Gameboy Green theme:
+            if (document.body.classList.contains('theme-gameboy-green')) {
+                return '#0f380f'; // Dark green
+            } else if (document.body.classList.contains('theme-vaporwave')) {
+                return '#ff71ce'; // Pink
+            } else if (document.body.classList.contains('theme-neo-vaporwave')) {
+                return '#D49B54'; // Orange/Yellow
+            } else if (document.body.classList.contains('theme-synthwave')) {
+                return '#ff00ff'; // Magenta
+            }
+            return '#0f380f'; // Default
+        }
+
+
+        function drawBars(color) {
+            ctx.fillStyle = color;
+            const barWidth = (canvas.width / bufferLength) * 2.5;
+            let x = 0;
+            for (let i = 0; i < bufferLength; i++) {
+                const barHeight = (dataArray[i] / 255) * canvas.height * 0.8; // Scale height
+                ctx.fillRect(x, canvas.height - barHeight, barWidth, barHeight);
+                x += barWidth + 1; // Add 1 for spacing
+            }
+        }
+
+        function drawWaveform(color) {
+            ctx.lineWidth = 2;
+            ctx.strokeStyle = color;
+            ctx.beginPath();
+            const sliceWidth = canvas.width * 1.0 / bufferLength;
+            let x = 0;
+            for (let i = 0; i < bufferLength; i++) {
+                const v = waveformArray[i] / 128.0; // Range 0-2
+                const y = v * canvas.height / 2;
+                if (i === 0) {
+                    ctx.moveTo(x, y);
+                } else {
+                    ctx.lineTo(x, y);
+                }
+                x += sliceWidth;
+            }
+            ctx.lineTo(canvas.width, canvas.height / 2);
+            ctx.stroke();
+        }
+
+        function drawSprites(color) {
+            // Example: Make sprite size react to overall volume
+            let overallVolume = 0;
+            for (let i = 0; i < bufferLength; i++) {
+                overallVolume += dataArray[i];
+            }
+            overallVolume /= bufferLength; // Average volume
+
+            const baseSize = 32; // Native sprite size
+            const scaleFactor = 1 + (overallVolume / 255) * 1.5; // Scale up to 2.5x
+            const spriteSize = baseSize * scaleFactor;
+            
+            const x = (canvas.width - spriteSize) / 2;
+            const y = (canvas.height - spriteSize) / 2;
+
+            let spriteToDraw = null;
+            if (activeSprite === 'pikachu' && sprites.pikachu) {
+                spriteToDraw = sprites.pikachu;
+            } else if (activeSprite === 'bulbasaur' && sprites.bulbasaur) {
+                spriteToDraw = sprites.bulbasaur;
+            }
+
+            if (spriteToDraw) {
+                // Optional: apply color filter or tint based on `color`
+                // For simplicity, drawing as is. For tinting, you'd draw to an offscreen canvas, apply filter, then draw to main.
+                ctx.drawImage(spriteToDraw, x, y, spriteSize, spriteSize);
+            } else {
+                ctx.fillStyle = color;
+                ctx.textAlign = 'center';
+                ctx.fillText(activeSprite === 'none' ? "No Sprite" : "Sprite Loading...", canvas.width/2, canvas.height/2);
+            }
+
+            // Add some simple particle effects reacting to sound
+            for (let i = 0; i < bufferLength; i += 10) { // Sample fewer points for particles
+                if (dataArray[i] > 150) { // Threshold for particle trigger
+                    ctx.fillStyle = `rgba(${Math.random()*255}, ${Math.random()*255}, ${Math.random()*255}, ${dataArray[i]/255})`;
+                    ctx.beginPath();
+                    ctx.arc(
+                        Math.random() * canvas.width, // Random x
+                        Math.random() * canvas.height, // Random y
+                        (dataArray[i] / 255) * 5, // Particle size based on intensity
+                        0, Math.PI * 2
+                    );
+                    ctx.fill();
+                }
+            }
+        }
+
+
+        // --- Menu Logic ---
+        function renderMenu() {
+            menuItemsElement.innerHTML = '';
+            let itemsToRender = activeSubMenu ? activeSubMenu.options : menuStructure.map(item => item.name);
+            let currentSelectionIndex = activeSubMenu ? currentSubMenuIndex : currentMenuIndex;
+
+            itemsToRender.forEach((itemText, index) => {
+                const li = document.createElement('li');
+                li.textContent = itemText;
+                li.className = 'p-1 cursor-pointer menu-item rounded';
+                if (index === currentSelectionIndex) {
+                    li.classList.add('selected');
+                }
+                li.onclick = () => {
+                    if (activeSubMenu) {
+                        currentSubMenuIndex = index;
+                        handleMenuSelect();
+                    } else {
+                        currentMenuIndex = index;
+                        handleMenuSelect();
+                    }
+                };
+                menuItemsElement.appendChild(li);
+            });
+        }
+
+        function toggleMenu(forceState) {
+            menuOpen = typeof forceState === 'boolean' ? forceState : !menuOpen;
+            if (menuOpen) {
+                activeSubMenu = null; // Reset to main menu
+                currentMenuIndex = 0;
+                menuOverlay.classList.remove('hidden');
+                renderMenu();
+                // Pause visualizer drawing if needed, or draw menu over it
+                // For now, draw() checks menuOpen status
+            } else {
+                menuOverlay.classList.add('hidden');
+                activeSubMenu = null;
+            }
+        }
+
+        function handleMenuNavigate(direction) {
+            if (!menuOpen) return;
+            const items = activeSubMenu ? activeSubMenu.options : menuStructure;
+            let currentIndex = activeSubMenu ? currentSubMenuIndex : currentMenuIndex;
+
+            if (direction === 'up') {
+                currentIndex = (currentIndex - 1 + items.length) % items.length;
+            } else if (direction === 'down') {
+                currentIndex = (currentIndex + 1) % items.length;
+            }
+
+            if (activeSubMenu) {
+                currentSubMenuIndex = currentIndex;
+            } else {
+                currentMenuIndex = currentIndex;
+            }
+            renderMenu();
+        }
+
+        function handleMenuSelect() {
+            if (!menuOpen) return;
+
+            if (activeSubMenu) {
+                // Executing action from sub-menu
+                const selectedOptionText = activeSubMenu.options[currentSubMenuIndex];
+                activeSubMenu.action(selectedOptionText);
+                activeSubMenu = null; // Go back to main menu
+                currentSubMenuIndex = 0; // Reset sub menu index
+                renderMenu(); // Re-render main menu
+            } else {
+                // Main menu item selected
+                const selectedMenuItem = menuStructure[currentMenuIndex];
+                if (selectedMenuItem.options && selectedMenuItem.options.length > 0) {
+                    activeSubMenu = selectedMenuItem;
+                    currentSubMenuIndex = 0; // Reset for new sub-menu
+                    renderMenu(); // Render sub-menu
+                } else if (selectedMenuItem.action) {
+                    // Action without sub-menu (like "Close Menu" or "Toggle Fullscreen")
+                    selectedMenuItem.action();
+                    // If menu didn't close itself, re-render
+                    if (menuOpen) renderMenu();
+                }
+            }
+        }
+
+        function handleMenuBack() {
+            if (!menuOpen) return;
+            if (activeSubMenu) {
+                activeSubMenu = null;
+                renderMenu(); // Go back to main menu
+            } else {
+                toggleMenu(false); // Close menu if on main menu
+            }
+        }
+
+        // --- Event Listeners ---
+        function setupEventListeners() {
+            // Keyboard controls
+            window.addEventListener('keydown', (e) => {
+                if (permissionModal.classList.contains('hidden')) { // Only if modal is not shown
+                    if (menuOpen) {
+                        switch (e.key) {
+                            case 'ArrowUp': handleMenuNavigate('up'); e.preventDefault(); break;
+                            case 'ArrowDown': handleMenuNavigate('down'); e.preventDefault(); break;
+                            case 'z': case 'Z': case 'Enter': handleMenuSelect(); e.preventDefault(); break; // A button / Select
+                            case 'x': case 'X': case 'Escape': handleMenuBack(); e.preventDefault(); break; // B button / Back
+                        }
+                    }
+                    // Global controls (even when menu is closed)
+                    switch (e.key) {
+                        case 'Enter': if (!menuOpen) toggleMenu(true); e.preventDefault(); break; // Start button
+                        case 'Shift': 
+                            // Example: Toggle audio source (placeholder for now)
+                            showMessage("Shift pressed - Audio source toggle (placeholder)");
+                            e.preventDefault(); 
+                            break; // Select button
+                    }
+                } else { // If permission modal is visible
+                     if (e.key === 'Enter') {
+                        startAppButton.click();
+                        e.preventDefault();
+                    }
+                }
+            });
+
+            // On-screen button controls
+            document.getElementById('btn-up').addEventListener('click', () => handleMenuNavigate('up'));
+            document.getElementById('btn-down').addEventListener('click', () => handleMenuNavigate('down'));
+            document.getElementById('btn-left').addEventListener('click', () => { /* Potentially for horizontal sub-menus or value changes */ });
+            document.getElementById('btn-right').addEventListener('click', () => { /* Potentially for horizontal sub-menus or value changes */ });
+            
+            document.getElementById('btn-a').addEventListener('click', handleMenuSelect);
+            document.getElementById('btn-b').addEventListener('click', handleMenuBack);
+            document.getElementById('btn-start').addEventListener('click', () => toggleMenu());
+            document.getElementById('btn-select').addEventListener('click', () => {
+                 showMessage("SELECT button pressed - Action TBD");
+            });
+
+            startAppButton.addEventListener('click', async () => {
+                permissionModal.classList.add('hidden');
+                await initAudio(); // Initialize audio after user interaction
+                resizeCanvas(); // Initial resize
+                if (!animationFrameId && audioInitialized) { // Start draw loop if not already started
+                    draw();
                 }
             });
             
-            // Force initial layout calculation
-            window.dispatchEvent(new Event('resize'));
-        });
+            window.addEventListener('resize', resizeCanvas);
+
+            // Touch handling for buttons to provide better feedback on mobile
+            const allButtons = document.querySelectorAll('.gameboy-button, .d-pad-button');
+            allButtons.forEach(button => {
+                button.addEventListener('touchstart', (e) => {
+                    e.preventDefault(); // Prevent double tap zoom, etc.
+                    button.classList.add('active'); // Visual feedback
+                    button.click(); // Trigger the click event for functionality
+                }, { passive: false });
+                button.addEventListener('touchend', (e) => {
+                    e.preventDefault();
+                    button.classList.remove('active');
+                });
+            });
+        }
+
+        // --- Initialization ---
+        function main() {
+            setupEventListeners();
+            resizeCanvas(); // Initial resize
+            // Don't start drawing loop here, it starts after audio init
+            // If you want something on screen before audio, call draw() once or have a separate idle loop.
+            // For now, the permission modal is the first thing seen.
+            // Draw a static "press start" or similar on canvas if desired before audio init.
+            ctx.fillStyle = getComputedStyle(canvas).backgroundColor || '#9bbc0f';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = '#0f380f';
+            ctx.textAlign = 'center';
+            ctx.fillText("Press START", canvas.width / 2, canvas.height / 2 - 10);
+            ctx.fillText("to grant Mic Access", canvas.width / 2, canvas.height / 2 + 10);
+
+        }
+
+        // Wait for the DOM to be fully loaded
+        document.addEventListener('DOMContentLoaded', main);
+
     </script>
 </body>
 </html>
