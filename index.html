@@ -55,7 +55,8 @@
             padding: 0;
         }
         .start-select-text {
-            font-size: 0.5rem; 
+            font-size: 0.45rem; /* Even smaller for mobile */
+            line-height: 1; /* Tighter line height */
             color: #303030;
             text-shadow: 1px 1px #a0a0a0;
             white-space: nowrap;
@@ -74,6 +75,7 @@
             background-color: #306230;
         }
 
+        /* Color Scheme CSS (omitted for brevity, same as before) */
         .theme-vaporwave .gameboy-bg { background-color: #ff71ce; }
         .theme-vaporwave .gameboy-screen-border { background-color: #01cdfe; }
         .theme-vaporwave .gameboy-screen { background-color: #05ffa1; }
@@ -116,57 +118,59 @@
 </head>
 <body class="bg-black flex items-center justify-center h-screen overflow-hidden theme-gameboy-green">
 
-    <div id="gameboy-container" class="gameboy-bg relative w-full h-full sm:w-[360px] sm:h-[600px] md:w-[400px] md:h-[660px] lg:w-[450px] lg:h-[750px] p-3 sm:p-4 rounded-lg shadow-2xl flex flex-col select-none">
-        <div class="gameboy-screen-border w-full flex-grow mb-3 sm:mb-4 rounded-md p-2 sm:p-3 flex items-center justify-center">
+    <div id="gameboy-container" class="gameboy-bg relative w-full h-full sm:w-[360px] sm:h-[600px] md:w-[400px] md:h-[660px] lg:w-[450px] lg:h-[750px] p-2 sm:p-3 rounded-lg shadow-2xl flex flex-col select-none">
+        <div class="gameboy-screen-border w-full flex-grow mb-2 sm:mb-3 rounded-md p-1.5 sm:p-2 flex items-center justify-center">
             <div id="screen-wrapper" class="relative w-full h-full">
                 <canvas id="visualizerCanvas" class="gameboy-screen w-full h-full pixelated rounded-sm"></canvas>
-                <div id="menuOverlay" class="absolute inset-0 bg-black bg-opacity-80 text-white p-3 sm:p-4 flex flex-col justify-center items-center hidden text-sm sm:text-base">
-                    <h2 class="text-lg sm:text-xl mb-3 sm:mb-4">MENU</h2>
+                <div id="menuOverlay" class="absolute inset-0 bg-black bg-opacity-80 text-white p-2 sm:p-3 flex flex-col justify-center items-center hidden text-sm">
+                    <h2 class="text-base sm:text-lg mb-2 sm:mb-3">MENU</h2>
                     <ul id="menuItems" class="w-full text-center"></ul>
-                    <p class="mt-3 sm:mt-4 text-xs">D-Pad/Arrows, A/Z: Select, B/X: Back</p>
+                    <p class="mt-2 sm:mt-3 text-xs">D-Pad/Arrows, A/Z: Select, B/X: Back</p>
                 </div>
-                <div id="messageBox" class="absolute inset-x-2 sm:inset-x-4 bottom-2 sm:bottom-4 bg-black bg-opacity-80 text-white p-2 text-center text-xs sm:text-sm hidden rounded">
+                <div id="messageBox" class="absolute inset-x-1 sm:inset-x-2 bottom-1 sm:bottom-2 bg-black bg-opacity-80 text-white p-1.5 text-center text-xs hidden rounded">
                     <p id="messageText"></p>
                 </div>
             </div>
         </div>
 
         <div class="flex-shrink-0">
-            <div class="text-center mb-2 sm:mb-3">
-                <span class="text-red-600 font-bold italic text-sm sm:text-lg" style="font-family: Arial, sans-serif;">N i n t e n d o</span>
-                <span class="text-red-600 font-bold text-lg sm:text-2xl align-middle" style="font-family: Arial, sans-serif;"> GAME BOY</span>
-                <span class="text-red-600 text-xs align-super" style="font-family: Arial, sans-serif;">™</span>
+            <div class="text-center mb-1 sm:mb-2">
+                <span class="text-red-600 font-bold italic text-xs sm:text-sm" style="font-family: Arial, sans-serif;">N i n t e n d o</span>
+                <span class="text-red-600 font-bold text-sm sm:text-lg align-middle" style="font-family: Arial, sans-serif;"> GAME BOY</span>
+                <span class="text-red-600 text-[0.5rem] sm:text-xs align-super" style="font-family: Arial, sans-serif;">™</span>
             </div>
-            <div class="grid grid-cols-3 gap-2 sm:gap-3 items-center justify-items-center mb-2 sm:mb-3">
+
+            <div class="grid grid-cols-3 gap-1 sm:gap-2 items-center justify-items-center mb-1 sm:mb-2">
                 <div class="flex justify-center items-center">
-                    <div class="grid grid-cols-3 grid-rows-3 w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24">
-                        <div></div> <button id="btn-up" class="d-pad-button col-start-2 rounded-t-md text-sm sm:text-base">▲</button> <div></div>
-                        <button id="btn-left" class="d-pad-button row-start-2 rounded-l-md text-sm sm:text-base">◀</button>
+                    <div class="grid grid-cols-3 grid-rows-3 w-14 h-14 sm:w-16 sm:h-16 md:w-20 md:h-20">
+                        <div></div> <button id="btn-up" class="d-pad-button col-start-2 rounded-t-md text-xs sm:text-sm">▲</button> <div></div>
+                        <button id="btn-left" class="d-pad-button row-start-2 rounded-l-md text-xs sm:text-sm">◀</button>
                         <div class="bg-gray-700 row-start-2 col-start-2"></div>
-                        <button id="btn-right" class="d-pad-button row-start-2 col-start-3 rounded-r-md text-sm sm:text-base">▶</button>
-                        <div></div> <button id="btn-down" class="d-pad-button row-start-3 col-start-2 rounded-b-md text-sm sm:text-base">▼</button> <div></div>
+                        <button id="btn-right" class="d-pad-button row-start-2 col-start-3 rounded-r-md text-xs sm:text-sm">▶</button>
+                        <div></div> <button id="btn-down" class="d-pad-button row-start-3 col-start-2 rounded-b-md text-xs sm:text-sm">▼</button> <div></div>
                     </div>
                 </div>
                 <div class="flex flex-col items-center justify-center h-full">
-                    <div class="w-8 sm:w-10 space-y-0.5 sm:space-y-1 opacity-50">
-                        <div class="h-0.5 sm:h-1 bg-gray-700 rounded-full"></div> <div class="h-0.5 sm:h-1 bg-gray-700 rounded-full"></div>
-                        <div class="h-0.5 sm:h-1 bg-gray-700 rounded-full"></div> <div class="h-0.5 sm:h-1 bg-gray-700 rounded-full"></div>
-                        <div class="h-0.5 sm:h-1 bg-gray-700 rounded-full"></div>
+                    <div class="w-6 sm:w-8 space-y-0.5 opacity-50">
+                        <div class="h-[2px] sm:h-0.5 bg-gray-700 rounded-full"></div> <div class="h-[2px] sm:h-0.5 bg-gray-700 rounded-full"></div>
+                        <div class="h-[2px] sm:h-0.5 bg-gray-700 rounded-full"></div> <div class="h-[2px] sm:h-0.5 bg-gray-700 rounded-full"></div>
+                        <div class="h-[2px] sm:h-0.5 bg-gray-700 rounded-full"></div>
                     </div>
                 </div>
-                <div class="flex justify-center items-center space-x-2 sm:space-x-3">
-                    <button id="btn-b" class="gameboy-button w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 rounded-full text-sm sm:text-base font-bold">B</button>
-                    <button id="btn-a" class="gameboy-button w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 rounded-full text-sm sm:text-base font-bold">A</button>
+                <div class="flex justify-center items-center space-x-1.5 sm:space-x-2">
+                    <button id="btn-b" class="gameboy-button w-7 h-7 sm:w-8 sm:h-8 md:w-10 md:h-10 rounded-full text-xs sm:text-sm font-bold">B</button>
+                    <button id="btn-a" class="gameboy-button w-7 h-7 sm:w-8 sm:h-8 md:w-10 md:h-10 rounded-full text-xs sm:text-sm font-bold">A</button>
                 </div>
             </div>
-            <div class="flex justify-center items-center space-x-4 sm:space-x-6 mt-1 sm:mt-2">
+
+            <div class="flex justify-center items-center space-x-3 sm:space-x-4 mt-0.5 sm:mt-1">
                 <div class="text-center">
-                    <button id="btn-select" class="gameboy-button w-10 h-4 sm:w-14 sm:h-5 md:w-16 md:h-6 rounded-full"></button>
-                    <p class="start-select-text mt-0.5 sm:mt-1">SELECT</p>
+                    <button id="btn-select" class="gameboy-button w-9 h-3.5 sm:w-12 sm:h-4 md:w-14 md:h-5 rounded-full"></button>
+                    <p class="start-select-text mt-[1px] sm:mt-0.5">SELECT</p>
                 </div>
                 <div class="text-center">
-                    <button id="btn-start" class="gameboy-button w-10 h-4 sm:w-14 sm:h-5 md:w-16 md:h-6 rounded-full"></button>
-                    <p class="start-select-text mt-0.5 sm:mt-1">START</p>
+                    <button id="btn-start" class="gameboy-button w-9 h-3.5 sm:w-12 sm:h-4 md:w-14 md:h-5 rounded-full"></button>
+                    <p class="start-select-text mt-[1px] sm:mt-0.5">START</p>
                 </div>
             </div>
         </div>
@@ -184,6 +188,8 @@
     </div>
 
     <script>
+        // console.log("Script execution started."); // Early log
+
         // --- DOM Elements ---
         const canvas = document.getElementById('visualizerCanvas');
         const ctx = canvas.getContext('2d');
@@ -214,24 +220,27 @@
 
         // --- Pokemon Sprite Specific State ---
         const POKEMON_SPRITE_BASE_URL_GEN5_ANIMATED = 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/';
-        // Let's pick a few Gen V Pokemon known to have animated sprites
-        const gen5PokemonIds = [
-            495, 496, 497, // Snivy, Servine, Serperior
-            498, 499, 500, // Tepig, Pignite, Emboar
-            501, 502, 503, // Oshawott, Dewott, Samurott
-            570, 571, // Zorua, Zoroark
-            610, 611, 612, // Axew, Fraxure, Haxorus
-            624, 625, // Pawniard, Bisharp
-            633, 634, 635 // Deino, Zweilous, Hydreigon
-        ];
+        const gen5PokemonIds = [ 495, 496, 497, 498, 499, 500, 501, 502, 503, 570, 571, 610, 611, 612, 624, 625, 633, 634, 635 ];
         let loadedPokemonSprites = [];
         let currentPokemonSprite = null;
-        let spriteX, spriteY, spriteVY; // For position and vertical velocity (for jumping)
-        const SPRITE_BASE_SIZE = 64; // Base size for drawing sprites
-        const SPRITE_GROUND_Y_OFFSET = 20; // How far from bottom sprite 'stands'
-        let spriteIsJumping = false;
+        let spriteX = 0, spriteY = 0, spriteVY = 0;
+        let spriteIsJumping = false; 
+        const SPRITE_BASE_SIZE = 64; 
+        const SPRITE_GROUND_Y_OFFSET = 20; 
         let spriteLoadAttempted = false;
 
+        // --- Utility Functions (showMessage needs to be defined early) ---
+        function showMessage(text, duration = 2000) {
+            if (messageText && messageBox) { 
+                messageText.textContent = text;
+                messageBox.classList.remove('hidden');
+                setTimeout(() => {
+                    messageBox.classList.add('hidden');
+                }, duration);
+            } else {
+                // console.log("Message (no UI):", text); 
+            }
+        }
 
         // --- Menu State ---
         let menuOpen = false;
@@ -244,9 +253,9 @@
                     currentVisualizer = option.toLowerCase(); 
                     showMessage(`Visualizer: ${option}`);
                     if (currentVisualizer === 'sprites' && loadedPokemonSprites.length === 0 && !spriteLoadAttempted) {
-                        loadPokemonSpriteGroup(gen5PokemonIds); // Load Gen V animated sprites
+                        loadPokemonSpriteGroup(gen5PokemonIds);
                     } else if (currentVisualizer === 'sprites' && loadedPokemonSprites.length > 0 && !currentPokemonSprite) {
-                        selectRandomPokemonSprite(); // Select one if already loaded
+                        selectRandomPokemonSprite();
                     }
                 }
             },
@@ -261,9 +270,9 @@
                     showMessage(`Color Scheme: ${option}`);
                 } 
             },
-            { // Changed from "Pokemon Sprite" to "Next Sprite"
+            {
                 name: "Next Sprite",
-                options: ['Change'], // Simplified options
+                options: ['Change'],
                 action: () => {
                     if (currentVisualizer === 'sprites') {
                         selectRandomPokemonSprite();
@@ -279,8 +288,8 @@
                 options: ['Off', 'On'], 
                 action: (option) => { 
                     glitchEffectActive = option === 'On';
-                    if (glitchEffectActive) canvas.classList.add('glitch');
-                    else canvas.classList.remove('glitch');
+                    if (glitchEffectActive && canvas) canvas.classList.add('glitch');
+                    else if (canvas) canvas.classList.remove('glitch');
                     showMessage(`Glitch: ${glitchEffectActive ? 'On' : 'Off'}`);
                 } 
             },
@@ -311,63 +320,400 @@
         function loadPokemonSpriteGroup(ids) {
             spriteLoadAttempted = true;
             showMessage("Loading Pokémon sprites...", 2500);
-            let loadedCount = 0;
-            ids.forEach(id => {
+            let requestedCount = ids.length;
+            let processedCount = 0; 
+
+            ids.forEach(id => { 
                 const img = new Image();
-                img.crossOrigin = "Anonymous"; // Important for some environments if sprites were on different domains
+                img.crossOrigin = "Anonymous"; 
                 img.onload = () => {
-                    loadedPokemonSprites.push({id: id, image: img, name: `Pokemon ${id}` }); // Store with ID for potential future use
-                    loadedCount++;
-                    if (loadedCount === ids.length) {
-                        showMessage(`${loadedCount} sprites loaded!`, 2000);
-                        if (currentVisualizer === 'sprites' && !currentPokemonSprite) {
+                    loadedPokemonSprites.push({id: id, image: img, name: `Pokemon ${id}` });
+                    processedCount++;
+                    if (processedCount === requestedCount) {
+                        showMessage(`${loadedPokemonSprites.length} of ${requestedCount} sprites loaded!`, 2000);
+                        if (currentVisualizer === 'sprites' && !currentPokemonSprite && loadedPokemonSprites.length > 0) {
                             selectRandomPokemonSprite();
+                        } else if (loadedPokemonSprites.length === 0) {
+                            showMessage("Failed to load any sprites.", 3000);
                         }
                     }
                 };
                 img.onerror = () => {
                     console.warn(`Failed to load sprite for Pokémon ID: ${id}`);
-                    // Potentially remove this ID or mark as failed if retrying
+                    processedCount++;
+                     if (processedCount === requestedCount) {
+                        showMessage(`${loadedPokemonSprites.length} of ${requestedCount} sprites loaded! (some failed)`, 2000);
+                        if (currentVisualizer === 'sprites' && !currentPokemonSprite && loadedPokemonSprites.length > 0) {
+                            selectRandomPokemonSprite();
+                        } else if (loadedPokemonSprites.length === 0) {
+                             showMessage("Failed to load any sprites.", 3000);
+                        }
+                    }
                 };
                 img.src = `${POKEMON_SPRITE_BASE_URL_GEN5_ANIMATED}${id}.gif`;
-            });
+            }); 
         }
 
         function selectRandomPokemonSprite() {
             if (loadedPokemonSprites.length > 0) {
                 const randomIndex = Math.floor(Math.random() * loadedPokemonSprites.length);
                 currentPokemonSprite = loadedPokemonSprites[randomIndex].image;
-                // Initialize sprite position
-                spriteX = canvas.width / 2;
-                spriteY = canvas.height - SPRITE_GROUND_Y_OFFSET - SPRITE_BASE_SIZE / 2; // Centered above ground
-                spriteVY = 0; // Vertical velocity
+                if (canvas) { // Ensure canvas exists for dimensions
+                    spriteX = canvas.width / 2;
+                    const initialSpriteHeight = currentPokemonSprite.height > 0 ? currentPokemonSprite.height : SPRITE_BASE_SIZE;
+                    spriteY = canvas.height - SPRITE_GROUND_Y_OFFSET - initialSpriteHeight / 2; 
+                } else { // Fallback if canvas not ready
+                    spriteX = 80; spriteY = 72;
+                }
+                spriteVY = 0; 
                 spriteIsJumping = false;
             } else {
                 currentPokemonSprite = null;
-                if (spriteLoadAttempted) showMessage("No sprites loaded. Check console.", 3000);
-                else showMessage("Loading sprites or none available.", 3000);
             }
         }
         
-        // --- Utility Functions ---
-        function showMessage(text, duration = 2000) { /* Unchanged */ }
-        function toggleFullScreen() { /* Unchanged */ }
+        function toggleFullScreen() {
+            if (!document.fullscreenElement && gameboyContainer) {
+                gameboyContainer.requestFullscreen().catch(err => { showMessage(`Error fullscreen: ${err.message}`); });
+                isFullScreen = true;
+            } else {
+                if (document.exitFullscreen) { document.exitFullscreen(); }
+                isFullScreen = false;
+            }
+            if (menuOpen) renderMenu();
+        }
 
-        // --- Audio Initialization ---
-        async function initAudio() { /* Unchanged, but ensure it's robust */ }
+        async function initAudio() {
+            // console.log("Attempting to initialize audio...");
+            if (audioContext && audioContext.state === 'running' && source && source.mediaStream && source.mediaStream.active) {
+                // console.log("Audio already initialized and running.");
+                return;
+            }
+            if (audioContext && audioContext.state === 'suspended') {
+                try {
+                    await audioContext.resume();
+                    // console.log("AudioContext resumed.");
+                    if (source && source.mediaStream && source.mediaStream.active) {
+                         audioInitialized = true;
+                         if (!animationFrameId) draw();
+                         return;
+                    }
+                } catch (err) {
+                    console.error("Error resuming AudioContext:", err);
+                    showMessage(`Resume Error: ${err.message}`, 3000);
+                }
+            }
 
-        // --- Canvas Resizing and Drawing ---
-        function resizeCanvas() { /* Unchanged */ }
+            try {
+                if (!audioContext) { 
+                    audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                }
+                const stream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
+                source = audioContext.createMediaStreamSource(stream);
+                analyser = audioContext.createAnalyser();
+                analyser.fftSize = 256; 
+                bufferLength = analyser.frequencyBinCount;
+                dataArray = new Uint8Array(bufferLength);
+                waveformArray = new Uint8Array(bufferLength);
+                source.connect(analyser);
+                audioInitialized = true;
+                showMessage("Microphone connected!", 1500);
+                // console.log("Audio initialized successfully.");
+                if (animationFrameId) cancelAnimationFrame(animationFrameId); 
+                animationFrameId = null; 
+                draw(); 
+            } catch (err) {
+                console.error("Error initializing audio:", err);
+                showMessage(`Mic Error: ${err.message}. Try refreshing.`, 5000);
+                if(permissionModal) permissionModal.classList.remove('hidden'); 
+                audioInitialized = false;
+            }
+        }
+
+        function resizeCanvas() {
+            if (!canvas || !ctx) return; 
+            // console.log("Resizing canvas...");
+            canvas.width = 160; 
+            canvas.height = 144;
+        }
 
         function draw() {
             animationFrameId = requestAnimationFrame(draw);
+            if (!ctx || !canvas) return; 
+
             ctx.fillStyle = getComputedStyle(canvas).backgroundColor || '#9bbc0f';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
 
             if (!audioInitialized || !analyser) {
-                // Idle screen text (unchanged)
                 const currentBg = getComputedStyle(canvas).backgroundColor;
-                const r = parseInt(currentBg.slice(1,3), 16);
-                const g = parseInt(currentBg.slice(3,5), 16);
-                const b = parseInt(currentBg.slice(5,7), 16);
-                const brightness
+                const r = parseInt(currentBg.slice(1,3), 16) || 0;
+                const g = parseInt(currentBg.slice(3,5), 16) || 0;
+                const b = parseInt(currentBg.slice(5,7), 16) || 0;
+                const brightness = (r * 299 + g * 587 + b * 114) / 1000;
+                ctx.fillStyle = brightness > 128 ? '#0f380f' : '#CADC9F';
+                ctx.textAlign = 'center';
+                ctx.font = "8px 'Press Start 2P'"; 
+
+                if (!audioContext || audioContext.state === 'suspended') {
+                     ctx.fillText("Audio Paused", canvas.width / 2, canvas.height / 2 - 10);
+                     ctx.fillText("Tap screen or", canvas.width / 2, canvas.height / 2 );
+                     ctx.fillText("select Mic in menu", canvas.width / 2, canvas.height / 2 + 10);
+                } else {
+                    ctx.fillText("Waiting for audio...", canvas.width / 2, canvas.height / 2);
+                }
+            }
+            
+            if (audioInitialized && analyser && dataArray && waveformArray) { // Ensure arrays are ready
+                analyser.getByteFrequencyData(dataArray);
+                analyser.getByteTimeDomainData(waveformArray);
+                const visualizerColor = getColorForTheme('visualizerElement');
+                switch (currentVisualizer) {
+                    case 'bars': drawBars(visualizerColor); break;
+                    case 'waveform': drawWaveform(visualizerColor); break;
+                    case 'sprites': drawSprites(visualizerColor); break;
+                }
+            }
+        }
+        
+        function getColorForTheme(elementType) { 
+            const bodyClasses = document.body.classList;
+            if (bodyClasses.contains('theme-gameboy-green')) return '#0f380f';
+            if (bodyClasses.contains('theme-vaporwave')) return '#01cdfe'; 
+            if (bodyClasses.contains('theme-neo-vaporwave')) return '#D49B54';
+            if (bodyClasses.contains('theme-synthwave')) return '#ff00ff';
+            return '#0f380f';
+        }
+        function drawBars(color) { 
+            if (!dataArray || !canvas) return;
+            ctx.fillStyle = color;
+            const barWidth = (canvas.width / bufferLength) * 2.5;
+            let x = 0;
+            for (let i = 0; i < bufferLength; i++) {
+                const barHeight = (dataArray[i] / 255) * canvas.height * 0.8;
+                ctx.fillRect(x, canvas.height - barHeight, barWidth, barHeight);
+                x += barWidth + 1; 
+            }
+        }
+        function drawWaveform(color) { 
+            if(!waveformArray || !canvas) return;
+            ctx.lineWidth = 2; ctx.strokeStyle = color; ctx.beginPath();
+            const sliceWidth = canvas.width * 1.0 / bufferLength;
+            let x = 0;
+            for (let i = 0; i < bufferLength; i++) {
+                const v = waveformArray[i] / 128.0; const y = v * canvas.height / 2;
+                if (i === 0) { ctx.moveTo(x, y); } else { ctx.lineTo(x, y); }
+                x += sliceWidth;
+            }
+            ctx.lineTo(canvas.width, canvas.height / 2); ctx.stroke();
+        }
+
+        function drawSprites(color) {
+            if (!canvas) return; // Ensure canvas is available
+            let overallVolume = 0;
+            let bassLevel = 0; 
+            if (dataArray && dataArray.length > 0) {
+                for (let i = 0; i < bufferLength; i++) { overallVolume += dataArray[i]; }
+                overallVolume = bufferLength > 0 ? overallVolume / bufferLength : 0;
+                for (let i = 0; i < Math.min(5, bufferLength); i++) { bassLevel += dataArray[i];}
+                bassLevel = Math.min(5, bufferLength) > 0 ? bassLevel / Math.min(5, bufferLength) : 0;
+            }
+
+            if (!currentPokemonSprite) {
+                ctx.fillStyle = color; 
+                ctx.textAlign = 'center';
+                ctx.font = "8px 'Press Start 2P'";
+                ctx.fillText(spriteLoadAttempted ? (loadedPokemonSprites.length === 0 ? "Sprite Load Fail" : "No Sprite / Error") : "Loading Sprites...", canvas.width / 2, canvas.height / 2);
+                if (dataArray && dataArray.length > 0) { /* particle drawing logic */ }
+                return; 
+            }
+
+            const scaleFactor = 1 + (overallVolume / 255) * 0.8;
+            const actualSpriteWidth = currentPokemonSprite.width > 0 ? currentPokemonSprite.width : SPRITE_BASE_SIZE;
+            const actualSpriteHeight = currentPokemonSprite.height > 0 ? currentPokemonSprite.height : SPRITE_BASE_SIZE;
+            const spriteDrawWidth = actualSpriteWidth * scaleFactor;
+            const spriteDrawHeight = actualSpriteHeight * scaleFactor;
+            
+            const gravity = 0.5;
+            const jumpPower = -8;
+
+            if (spriteIsJumping) {
+                spriteVY += gravity;
+                spriteY += spriteVY;
+                if (spriteY >= canvas.height - SPRITE_GROUND_Y_OFFSET - spriteDrawHeight / 2) {
+                    spriteY = canvas.height - SPRITE_GROUND_Y_OFFSET - spriteDrawHeight / 2;
+                    spriteIsJumping = false;
+                    spriteVY = 0;
+                }
+            }
+
+            if (bassLevel > 180 && !spriteIsJumping) {
+                spriteIsJumping = true;
+                spriteVY = jumpPower * (1 + Math.min(0.5, bassLevel / 255));
+            }
+            
+            spriteX += Math.sin(Date.now() / 1000) * 0.3;
+            if (spriteX > canvas.width - spriteDrawWidth / 2) spriteX = canvas.width - spriteDrawWidth / 2;
+            if (spriteX < spriteDrawWidth / 2) spriteX = spriteDrawWidth / 2;
+
+            try {
+                ctx.drawImage(currentPokemonSprite, spriteX - spriteDrawWidth / 2, spriteY - spriteDrawHeight / 2, spriteDrawWidth, spriteDrawHeight);
+            } catch (e) {
+                console.error("Error drawing Pokémon sprite:", e, currentPokemonSprite ? currentPokemonSprite.src : "Sprite source unknown");
+                currentPokemonSprite = null; 
+            }
+
+            if (dataArray && dataArray.length > 0) { /* particle drawing logic */ }
+        }
+
+        function renderMenu() {
+            if (!menuItemsElement) return;
+            menuItemsElement.innerHTML = '';
+            let itemsToRender = activeSubMenu ? activeSubMenu.options : menuStructure.map(item => item.name);
+            let currentSelectionIndex = activeSubMenu ? currentSubMenuIndex : currentMenuIndex;
+            itemsToRender.forEach((itemText, index) => {
+                const li = document.createElement('li');
+                li.textContent = itemText;
+                li.className = 'p-1 cursor-pointer menu-item rounded text-xs sm:text-sm md:text-base';
+                if (index === currentSelectionIndex) { li.classList.add('selected'); }
+                li.onclick = () => { 
+                    if (activeSubMenu) { currentSubMenuIndex = index; handleMenuSelect(); } 
+                    else { currentMenuIndex = index; handleMenuSelect(); }
+                };
+                menuItemsElement.appendChild(li);
+            });
+        }
+        function toggleMenu(forceState) {
+            if (!menuOverlay) return;
+            menuOpen = typeof forceState === 'boolean' ? forceState : !menuOpen;
+            if (menuOpen) {
+                activeSubMenu = null; currentMenuIndex = 0;
+                menuOverlay.classList.remove('hidden');
+                renderMenu();
+            } else {
+                menuOverlay.classList.add('hidden');
+                activeSubMenu = null;
+            }
+        }
+        function handleMenuNavigate(direction) { 
+            if (!menuOpen) return;
+            const items = activeSubMenu ? activeSubMenu.options : menuStructure;
+            let currentIndex = activeSubMenu ? currentSubMenuIndex : currentMenuIndex;
+            if (direction === 'up') currentIndex = (currentIndex - 1 + items.length) % items.length;
+            else if (direction === 'down') currentIndex = (currentIndex + 1) % items.length;
+            if (activeSubMenu) currentSubMenuIndex = currentIndex;
+            else currentMenuIndex = currentIndex;
+            renderMenu();
+        }
+        function handleMenuSelect() { 
+            if (!menuOpen) return;
+            if (activeSubMenu) {
+                const selectedOptionText = activeSubMenu.options[currentSubMenuIndex];
+                activeSubMenu.action(selectedOptionText);
+                activeSubMenu = null; currentSubMenuIndex = 0; renderMenu();
+            } else {
+                const selectedMenuItem = menuStructure[currentMenuIndex];
+                if (selectedMenuItem.options && selectedMenuItem.options.length > 0) {
+                    activeSubMenu = selectedMenuItem; currentSubMenuIndex = 0; renderMenu();
+                } else if (selectedMenuItem.action) {
+                    selectedMenuItem.action();
+                    if (menuOpen) renderMenu();
+                }
+            }
+        }
+        function handleMenuBack() { 
+            if (!menuOpen) return;
+            if (activeSubMenu) { activeSubMenu = null; renderMenu(); } 
+            else { toggleMenu(false); }
+        }
+        
+        function setupEventListeners() {
+            // console.log("Setting up event listeners...");
+            window.addEventListener('keydown', (e) => {
+                if (!permissionModal || permissionModal.classList.contains('hidden')) { 
+                    if (audioContext && audioContext.state === 'suspended') { audioContext.resume().catch(err => console.error("Resume err:", err)); }
+                    if (menuOpen) { 
+                        switch (e.key) {
+                            case 'ArrowUp': handleMenuNavigate('up'); e.preventDefault(); break;
+                            case 'ArrowDown': handleMenuNavigate('down'); e.preventDefault(); break;
+                            case 'z': case 'Z': case 'Enter': handleMenuSelect(); e.preventDefault(); break; 
+                            case 'x': case 'X': case 'Escape': handleMenuBack(); e.preventDefault(); break; 
+                        }
+                    }
+                     switch (e.key) { 
+                        case 'Enter': 
+                            if (!menuOpen && !activeSubMenu) { 
+                                toggleMenu(true); 
+                            } else if (activeSubMenu && menuOpen) { 
+                                handleMenuSelect();
+                            }
+                            e.preventDefault(); 
+                            break; 
+                        case 'Shift': 
+                            showMessage("Select (Shift) action TBD");
+                            e.preventDefault(); 
+                            break; 
+                    }
+                } else { 
+                     if (e.key === 'Enter' && startAppButton) { startAppButton.click(); e.preventDefault(); }
+                }
+            });
+            
+            document.getElementById('btn-up')?.addEventListener('click', () => handleMenuNavigate('up'));
+            document.getElementById('btn-down')?.addEventListener('click', () => handleMenuNavigate('down'));
+            document.getElementById('btn-left')?.addEventListener('click', () => { if(menuOpen) showMessage("Left D-Pad"); });
+            document.getElementById('btn-right')?.addEventListener('click', () => { if(menuOpen) showMessage("Right D-Pad"); });
+            
+            document.getElementById('btn-a')?.addEventListener('click', handleMenuSelect);
+            document.getElementById('btn-b')?.addEventListener('click', handleMenuBack);
+            document.getElementById('btn-start')?.addEventListener('click', () => toggleMenu());
+            document.getElementById('btn-select')?.addEventListener('click', () => {
+                 showMessage("SELECT button action TBD");
+            });
+
+            startAppButton?.addEventListener('click', async () => {
+                if(permissionModal) permissionModal.classList.add('hidden');
+                await initAudio(); 
+                resizeCanvas(); 
+            });
+            
+            window.addEventListener('resize', resizeCanvas);
+
+            document.body.addEventListener('click', () => {
+                if (audioContext && audioContext.state === 'suspended') {
+                    audioContext.resume().catch(e => console.error("Error resuming AudioContext on body click:", e));
+                }
+            }, true);
+            // console.log("Event listeners setup complete.");
+        }
+        
+        function main() {
+            // console.log("Main function started.");
+            if (!canvas || !ctx) {
+                console.error("Canvas or context not found on main init!");
+                return;
+            }
+            setupEventListeners();
+            resizeCanvas(); 
+            
+            ctx.fillStyle = getComputedStyle(canvas).backgroundColor || '#9bbc0f';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = '#0f380f';
+            ctx.textAlign = 'center';
+            ctx.font = "8px 'Press Start 2P'"; 
+            ctx.fillText("Tap START or Screen", canvas.width / 2, canvas.height / 2 - 10);
+            ctx.fillText("to grant Mic Access", canvas.width / 2, canvas.height / 2);
+            ctx.fillText("& begin visualization", canvas.width / 2, canvas.height / 2 + 10);
+            // console.log("Main function finished. App should be idle, waiting for user start.");
+        }
+
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', main);
+        } else {
+            main(); 
+        }
+        // console.log("Script execution finished initial setup.");
+
+    </script>
+</body>
+</html>
+
